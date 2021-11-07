@@ -34,23 +34,18 @@ export default class Discover extends React.Component {
     };
   }
 
-  // Write a function to preload the popular movies when page loads & get the movie genres
   componentDidMount() {
-    this.getDiscover()
-    this.getGenres()
-    console.log(this.state)
+    this.getDiscover();
+    this.getGenres();
   }
-
 
   // Write a function to trigger the API request and load the search results based on the keyword and year given as parameters
   async getDiscover() {
     await API.getDiscover()
     .then(data => {
-    console.log(data.results)
-
       if (data.results.length > 0) {
-        const results = data.results;
-        this.setState({ results })
+        console.log(data.results)
+        this.setState({ results: data.results, totalCount: data.results.length })
       } else if (data.errors) {
         this.alertFunc('There is an error/ change this message')
       }
@@ -60,7 +55,6 @@ export default class Discover extends React.Component {
   async getGenres() {
     await API.getGenres()
     .then(data => {
-      console.log(data.genres)
       if (data.genres.length > 0) {
         this.setState({ genreOptions: data.genres })
       } else if (data.errors) {
@@ -69,11 +63,30 @@ export default class Discover extends React.Component {
     })
   }
 
-  filteredResults = () => {
-    const filteredResults = this.state.results.filter(result =>
-      result.title.toLowerCase().includes(this.state.keyword.toLowerCase())
-    )
-    return filteredResults
+  async getSearchResults(keyword, year) {
+    await API.getSearchResults(keyword, year)
+    .then(data => {
+      if (data.results.length > 0) {
+        this.setState({ results: data.results, totalCount: data.results.length })
+      } else if (data.errors) {
+        this.alertFunc('There is an error/ change this message')
+      }
+    })
+  }
+
+  searchMovies(evt) {
+    const name = evt.target.name;
+    const value = evt.target.value;
+    this.setState({
+      ...this.state,
+      [name]: value
+    }, function () {
+      if (this.state.keyword.length > 0) {
+        this.getSearchResults(this.state.keyword, this.state.year);
+      } else {
+        this.getDiscover();
+      }
+    })
   }
 
   render () {
@@ -87,13 +100,13 @@ export default class Discover extends React.Component {
             genres={genreOptions} 
             ratings={ratingOptions}  
             languages={languageOptions}
-            searchMovies={(keyword, year) => this.searchMovies(keyword, year)}
+            searchMovies={event => this.searchMovies(event)}
           />
         </MovieFilters>
         <MovieResults>
-          { totalCount > 0 && <TotalCounter>{totalCount} results</TotalCounter>}
+          { totalCount > 0 && <TotalCounter>{totalCount} {totalCount > 1 ? 'results' : 'result'}</TotalCounter>}
           <MovieList 
-            movies={this.filteredResults() || results || []}
+            movies={results || []}
             genres={genreOptions || []}
           />
         </MovieResults>

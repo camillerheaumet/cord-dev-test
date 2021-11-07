@@ -19,6 +19,9 @@ input, textarea {
 
 .closeButton,
 .sideBarButton {
+  color: white;
+  fill: #001e2d;
+
   @media (min-width: 1024px){
     display: none;
   }
