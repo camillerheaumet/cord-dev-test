@@ -22,12 +22,19 @@ input, textarea {
 
 .search_inputs_cont .search_input:last-child {
   margin-bottom: 10px; }
-  @media only screen and (max-width: 768px) {
-    .search_inputs_cont .search_input:last-child {
-      display: none; } }
+
+@media only screen and (max-width: 768px) {
+  .search_inputs_cont .search_input:last-child {
+    display: none; } }
 
 .mobile_only_input {
   display: none; }
-  @media only screen and (max-width: 768px) {
-    .mobile_only_input {
-      display: block; } }
+
+@media only screen and (max-width: 768px) {
+  .mobile_only_input {
+    display: block; } }
+
+@media (min-width: 1024px) {
+  .closeButton,
+  .sideBarButton {
+    display: none; } }
