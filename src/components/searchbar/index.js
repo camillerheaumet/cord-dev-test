@@ -4,15 +4,17 @@ import styled from 'styled-components';
 import * as colors from "../../colors";
 import SearchIcon from "../../images/search-icon-yellow.png";
 import CalendarIcon from "../../images/year-icon.png";
+import FilterIcon from "../../images/filter-icon.png";
 
 export default class SearchBar extends React.Component {
   render () {
-    const { searchMovies } = this.props;
+    const { searchMovies, handleMobileExpandableFilter } = this.props;
 
     return (
       <SearchBarForm onChange={event => searchMovies(event)} >
-        <SearchBarInput name="keyword" type="text" placeholder="Search for movies"/>
-        <SearchBarInput name="year" type="number" maxLength="4" placeholder="Year of release"/>
+        <SearchBarInput className="search_input" name="keyword" type="text" placeholder="Search for movies"/>
+        <img className="search_img mobile_only_input" src={FilterIcon} alt="Search icon" onClick={() => handleMobileExpandableFilter()}/>
+        <SearchBarInput className="search_input" name="year" type="number" maxLength="4" placeholder="Year of release"/>
       </SearchBarForm>
     )
   }
@@ -21,9 +23,13 @@ export default class SearchBar extends React.Component {
 const SearchBarForm = styled.form`
   display: flex;
   flex-direction: column;
+  @media only screen and (max-width: 1023px){
+    flex-direction: row;
+  }
 `
 
 const SearchBarInput = styled.input`
+  flex: 1;
   color: ${colors.primaryColor};
   border: none;
   border-bottom: 2px solid ${colors.primaryColor};

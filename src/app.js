@@ -30,7 +30,7 @@ export default class App extends React.Component {
         <PageContainer>
           <SideNavBar {...this.props} isOpen={isOpen} handleSidebar={handleSidebar}/>
           <ContentWrapper>
-            <FaIcons.FaHamburger className="sideBarButton" onClick={handleSidebar} />
+            <FaIcons.FaHamburger className="sideBarButton mobile_only_input" onClick={handleSidebar} />
             <Switch>
               <Route path="/discover" component={Discover} {...this.props} handleSidebar={handleSidebar}/>
             </Switch>
@@ -44,7 +44,7 @@ export default class App extends React.Component {
 
 const ContentWrapper = styled.main`
   padding-left: 280px;
-  @media (max-width: 1023px){
+  @media only screen and (max-width: 1023px){
     padding-left: 0;
   }
 `

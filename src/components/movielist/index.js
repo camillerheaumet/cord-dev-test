@@ -10,7 +10,7 @@ export default class MovieList extends React.Component {
 
     return (
       <MoviesWrapper>
-        {movies.map(movie => <MovieItem movie={movie} genres={genres}></MovieItem>)}
+        {movies.map((movie, index) => <MovieItem key={movie.id} movie={movie} genres={genres}></MovieItem>)}
       </MoviesWrapper>
     )
   }

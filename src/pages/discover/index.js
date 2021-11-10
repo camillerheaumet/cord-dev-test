@@ -26,11 +26,15 @@ export default class Discover extends React.Component {
         { id: 10, name: 10 }
       ],
       languageOptions: [
-        { id: 'GR', name: 'Greek' },
+        { id: 'FR', name: 'French' },
+        { id: 'EL', name: 'Greek' },
         { id: 'EN', name: 'English' },
         { id: 'RU', name: 'Russian' },
         { id: 'PO', name: 'Polish' }
-      ]
+      ],
+      selectedGenres: [],
+      selectedRating: {},
+      selectedLanguage: {}
     };
   }
 
@@ -40,11 +44,10 @@ export default class Discover extends React.Component {
   }
 
   // Write a function to trigger the API request and load the search results based on the keyword and year given as parameters
-  async getDiscover() {
-    await API.getDiscover()
+  async getDiscover(genres, rating, language) {
+    await API.getDiscover(genres, rating, language)
     .then(data => {
       if (data.results.length > 0) {
-        console.log(data.results)
         this.setState({ results: data.results, totalCount: data.results.length })
       } else if (data.errors) {
         this.alertFunc('There is an error/ change this message')
@@ -63,9 +66,10 @@ export default class Discover extends React.Component {
     })
   }
 
-  async getSearchResults(keyword, year) {
-    await API.getSearchResults(keyword, year)
+  async getSearchResultsKeyword(keyword, year, genres, rating, language) {
+    await API.getSearchResults(keyword, year, genres, rating, language)
     .then(data => {
+      console.log(data.results)
       if (data.results.length > 0) {
         this.setState({ results: data.results, totalCount: data.results.length })
       } else if (data.errors) {
@@ -81,26 +85,59 @@ export default class Discover extends React.Component {
       ...this.state,
       [name]: value
     }, function () {
-      if (this.state.keyword.length > 0) {
-        this.getSearchResults(this.state.keyword, this.state.year);
-      } else {
-        this.getDiscover();
-      }
-    })
+    if (this.state.keyword.length > 0) {
+      this.getSearchResultsKeyword(this.state.keyword, this.state.year, this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    } else {
+      this.getDiscover(this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    }
+  })
+  }
+
+  handleCheckboxClicked = (obj, type, checked) => {
+    if (type === 'genres') {
+      this.setState({ selectedGenres: (checked ? [...this.state.selectedGenres, obj] : this.state.selectedGenres.filter(genre => genre.id !== obj.id)) }, function () {
+    if (this.state.keyword.length > 0) {
+      this.getSearchResultsKeyword(this.state.keyword, this.state.year, this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    } else {
+      this.getDiscover(this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    }
+  })
+    } else {
+      const stateName = type === 'ratings' ? 'selectedRating' : 'selectedLanguage';
+      this.setState({ [stateName]: (checked ? obj : {}) }, function () {
+    if (this.state.keyword.length > 0) {
+      this.getSearchResultsKeyword(this.state.keyword, this.state.year, this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    } else {
+      this.getDiscover(this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    }
+  })
+    }
+  }
+
+  getSearchResults(keyword, year, genres, rating, language) {
+    if (keyword.length > 0) {
+      this.getSearchResultsKeyword(this.state.keyword, this.state.year, this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    } else {
+      this.getDiscover(this.state.selectedGenres, this.state.selectedRating, this.state.selectedLanguage);
+    }
   }
 
   render () {
-    const { genreOptions, languageOptions, ratingOptions, totalCount, results } = this.state;
+    const { genreOptions, languageOptions, ratingOptions, selectedGenres, selectedRating, selectedLanguage, totalCount, results } = this.state;
 
     return (
       <DiscoverWrapper>
-        <MobilePageTitle>Discover</MobilePageTitle> {/* MobilePageTitle should become visible on small screens & mobile devices*/}
+        <MobilePageTitle className="mobile_only_input">Discover</MobilePageTitle>
         <MovieFilters>
           <SearchFilters 
             genres={genreOptions} 
             ratings={ratingOptions}  
             languages={languageOptions}
+            selectedGenres={selectedGenres}
+            selectedRating={selectedRating}
+            selectedLanguage={selectedLanguage}
             searchMovies={event => this.searchMovies(event)}
+            handleCheckboxClicked={this.handleCheckboxClicked}
           />
         </MovieFilters>
         <MovieResults>
@@ -116,7 +153,13 @@ export default class Discover extends React.Component {
 }
 
 const DiscoverWrapper = styled.main`
-  padding: 60px 35px;
+  padding: 30px 15px;
+
+  @media only screen and (min-width: 1024px){
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 60px 35px;
+  }
 `
 
 const TotalCounter = styled.div`
@@ -124,13 +167,21 @@ const TotalCounter = styled.div`
 `
 
 const MovieResults = styled.div`
-
+  @media only screen and (min-width: 1024px){
+    width: 75%;
+  }
 `
 
 const MovieFilters = styled.div`
+  @media only screen and (min-width: 1024px){
+    width: 25%;
+    margin: 35px 0 0 15px;
+  }
 
 `
 
 const MobilePageTitle = styled.header`
-
+  font-size: 25px;
+  font-weight: 800;
+  padding-left: 50px;
 `

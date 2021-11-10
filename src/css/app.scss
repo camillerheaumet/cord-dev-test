@@ -1,9 +1,11 @@
+@import "base/colos";
+
 body {
   font-family: 'Lato', sans-serif;
   font-size: 1em;
   line-height: 1.3;
-  background-color: #f6f7f9;
-  color: rgb(64, 78, 95);
+  background-color: $lightBackground;
+  color: $fontColor;
   margin: 0;
   padding: 0;
 }
@@ -17,12 +19,58 @@ input, textarea {
   background-color: transparent;
 }
 
-.closeButton,
-.sideBarButton {
-  color: white;
-  fill: #001e2d;
+.menu_nav_link.active {
+  background-color: $primaryColor;
+}
 
-  @media (min-width: 1024px){
+.main_nav_link.active {
+  background-color: transparent;
+}
+
+.search_inputs_cont .search_input:last-child {
+  margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 1024px) {
+  .search_inputs_cont .search_input:last-child {
     display: none;
   }
+}
+
+.search_img {
+  width: 30px;
+  height: 30px;
+  padding-bottom: 5px;
+  margin-left: 10px;
+  border-bottom: 2px solid $primaryColor;
+  align-self: end;
+}
+
+.mobile_only_input {
+  display: none;
+}
+
+@media only screen and (max-width: 1024px) {
+  .mobile_only_input {
+    display: block;
+  }
+}
+
+.closeButton,
+.sideBarButton {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  color: $lightBackground;
+  fill: $fontColor;
+}
+
+.closeButton {
+  top: 15px;
+  right: 15px;
+}
+
+.sideBarButton {
+  top: 30px;
+  left: 15px;
 }
